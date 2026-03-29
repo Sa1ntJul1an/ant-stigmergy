@@ -1,6 +1,7 @@
 import './style.css'
 import { Renderer } from './Renderer'
 import { Grid } from './Grid';
+import { Engine } from './Engine';
 
 function start() {
   const canvas = document.getElementById('antCanvas') as HTMLCanvasElement;
@@ -16,15 +17,30 @@ function start() {
     return;
   }
 
-  const gridSize = 5;
+  const genObstaclesBtn = document.getElementById('refreshObstacles') as HTMLButtonElement;
+  
+  const cellSize = 5;
+  const cols = Math.floor(width / cellSize);
+  const rows = Math.floor(height / cellSize);
 
-  const renderer = new Renderer(ctx, width, height, gridSize);
-  const grid = new Grid(height / gridSize, width / gridSize);
+  const renderer = new Renderer(ctx, width, height, cellSize);
+  const engine = new Engine(1000);
+  const grid = new Grid(rows, cols, cellSize);
 
-  grid.initObstacles();
+
+  genObstaclesBtn.addEventListener('click', () => {
+    grid.initObstacles();
+    engine.setEnvironment(grid);
+  })
 
   // Event listeners 
   canvas.addEventListener('mousedown', (e) => {
+    const gridX = Math.floor(e.offsetX / cellSize);
+    const gridY = Math.floor(e.offsetY / cellSize);
+    engine.handleMouseDown({
+      x: Math.max(0, Math.min(gridX, cols - 1)),
+      y: Math.max(0, Math.min(gridY, rows - 1))
+    });
   })
 
   canvas.addEventListener('mousemove', (e) => {

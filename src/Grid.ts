@@ -13,12 +13,15 @@ export class Grid {
   private nextPheromoneGrid: Uint8Array;
 
   private obstacleSmoothingSteps: number;
+  private cellSize: number;
 
-  constructor(public rows: number, public cols: number) {
+  constructor(public rows: number, public cols: number, cellSize: number) {
     this.antGrid = new Uint8Array(rows * cols).fill(0);
     this.pheromoneGrid = new Uint8Array(rows * cols).fill(0);
     this.foodGrid = new Uint8Array(rows * cols).fill(0);
     this.obstacleGrid = new Uint8Array(rows * cols).fill(0);
+
+    this.cellSize = cellSize;
     
     this.nextAntGrid = new Uint8Array(rows * cols).fill(0);
     this.nextFoodGrid = new Uint8Array(rows * cols).fill(0);
@@ -26,6 +29,10 @@ export class Grid {
     this.nextPheromoneGrid = new Uint8Array(rows * cols).fill(0);
     
     this.obstacleSmoothingSteps = 10;
+  }
+
+  private clearObstacles(): void {
+    this.obstacleGrid.fill(0);
   }
 
   // map (x, y) to 1D index 
@@ -55,6 +62,7 @@ export class Grid {
 
   public initObstacles(): void {
     console.log("initializing obstacles")
+    this.clearObstacles();
     // seed static noise map of obstacles
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.cols; c++) {
@@ -183,20 +191,6 @@ export class Grid {
   }
 
   public step(): void {
-
-    // for (let r = 0; r < this.rows; r++) {
-    //   for (let c = 0; c < this.cols; c++) {
-    //     const neighbors = this.countNeighbors(r, c);
-    //     const index = this.getIndex(r, c);
-    //
-    //     if (this.grid[index] > 0) {
-    //       this.nextGrid[index] = (neighbors === 2 || neighbors === 3) ? 1 : 0;
-    //     } else {
-    //       this.nextGrid[index] = (neighbors === 3) ? 1 : 0;
-    //     }
-    //   }
-    // }
-    // // swap grids 
-    // this.grid.set(this.nextGrid);
+    
   }
 }

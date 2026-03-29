@@ -16,7 +16,7 @@ export class Renderer {
     this.width = width;
     this.cellSize = cellSize;
    
-    this.emptyGridColor = '#161616'
+    this.emptyGridColor = '#2f2f2f'
     this.obstacleColor = '#ff3a09';
     this.antColor = 'white';
     this.foodColor = 'green';
