@@ -55,7 +55,7 @@ export class Grid {
 
   public initObstacles(): void {
     console.log("initializing obstacles")
-    // seed roughly 50% density static noise map of obstacles
+    // seed static noise map of obstacles
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.cols; c++) {
         if (Math.random() > 0.68) {
