@@ -1,3 +1,5 @@
-# Rapidly Exploring Random Tree
+# Ant Stigmergy
 
-This repo contains a typescript implementation of the Rapidly Exploring Random Tree (RRT) algorithm.
+[Stigmergy](https://en.wikipedia.org/wiki/Stigmergy) is the mechanism used by ants to coordinate the movements of many individuals in an environment. It is a form of self-organization, producing intelligent path planning without the need for communcation between individuals or oversight by a leader.  In ants, stigmergy is enabled by the deposition of pheromone trails on the ground that can be detected by other ants.  When an ant has located a source of food, it brings the food back to the colony while depositing a pheromone trail that leads from the food source back to the nest.  When other ants exit the nest in search of food, they instinctually follow the pheromone trail to the source of the food.  They then reinforce this path by depositing their own pheromone trails, strengthening the signal to other ants.  This forms a network of paths between the nest and sources of food that is dynamically updated and shared amongst the colony. 
+
+I have attempted to simulate this process using a graph of cells, each of which can contain an ant, obstacle, or piece of food (binary states).  Each cell also has a numerical quantity representing the pheromone level at that cell. 
