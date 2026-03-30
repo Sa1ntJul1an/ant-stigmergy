@@ -1,6 +1,5 @@
 import type { Grid } from "./Grid";
 import { Renderer } from "./Renderer";
-import type { Coord } from "./types";
 
 enum EngineState {
   GENERATING_OBSTACLES,
@@ -14,7 +13,8 @@ export class Engine {
   private environment: Grid | null;
   private currentState: EngineState;
   private renderer: Renderer;
-  
+  private nestSize: number;
+
   constructor(initPopulation: number, renderer: Renderer) {
     this.antPopulation = initPopulation;
 
@@ -22,6 +22,8 @@ export class Engine {
     this.environment = null;
     this.currentState = EngineState.PLACING_NEST;
     this.renderer = renderer;
+
+    this.nestSize = 7;
   }
 
   public handleMouseDown(coord: {x: number, y: number}): void {
@@ -31,7 +33,7 @@ export class Engine {
           console.error("attempting to place nest, but environment is not initialized")
           return;
         }
-        this.environment.setNest(coord.x, coord.y);
+        this.environment.setNest(coord.x, coord.y, this.nestSize);
         this.currentState = EngineState.PLACING_FOOD;
         break;
       case EngineState.PLACING_FOOD:

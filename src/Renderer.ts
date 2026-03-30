@@ -40,6 +40,15 @@ export class Renderer {
     this.ctx.clearRect(0, 0, this.width, this.height); 
   }
 
+  private drawCell(c: number, r: number) {
+    this.ctx.fillRect(
+      c * this.cellSize,
+      r * this.cellSize,
+      this.cellSize - 1,
+      this.cellSize - 1
+    )
+  }
+
   public drawGrid(grid: Grid): void {
     const cellStates = grid.cellStates;
     const explorePheromoneLevels = grid.pheromoneGrid;
@@ -47,26 +56,30 @@ export class Renderer {
     for (let r = 0; r < grid.rows; r++) {
       for (let c = 0; c < grid.cols; c++) {
         index = grid.getIndex(c, r);
-        if (cellStates[index] & EXPLORING_ANT || cellStates[index] & RETURNING_ANT) {
-          this.ctx.fillStyle = this.antColor;
-        } else if (cellStates[index] & NEST) {
+        if (cellStates[index] & NEST) {
           this.ctx.fillStyle = this.nestColor;
         } else if (cellStates[index] & FOOD) {
           this.ctx.fillStyle = this.foodColor;
         } else if (cellStates[index] & OBSTACLE) {
           this.ctx.fillStyle = this.obstacleColor;
-        } else if (explorePheromoneLevels[index] > 0) {
-          // this.ctx.fillStyle = this.explorePheromoneColor;
-          this.ctx.fillStyle = `rgba(255, 0, 255, ${explorePheromoneLevels[index] / 100})`
         } else {
           this.ctx.fillStyle = this.emptyGridColor;
         }
-        this.ctx.fillRect(
-          c * this.cellSize,
-          r * this.cellSize,
-          this.cellSize - 1,
-          this.cellSize - 1
-        )
+        this.drawCell(c, r);
+
+        // draw pheromone levels if they exist
+        const pheromoneLevel = explorePheromoneLevels[index];
+        if (pheromoneLevel > 0 && !(cellStates[index] & (OBSTACLE | FOOD | NEST))) {
+          let alpha = (0.4 * (1 + (pheromoneLevel / 100)));
+          this.ctx.fillStyle = `rgba(255, 0, 255, ${alpha})`;
+          this.drawCell(c, r);
+        }
+
+        // draw ants over pheromone levels
+        if (cellStates[index] & EXPLORING_ANT || cellStates[index] & RETURNING_ANT) {
+          this.ctx.fillStyle = this.antColor;
+          this.drawCell(c, r);
+        }
       }
     }
   }

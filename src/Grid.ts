@@ -13,6 +13,9 @@ export class Grid {
 
   // private nextPheromoneGrid: Uint8Array;
 
+  private pheromoneEvaporation: number;
+  private pheromoneDeposition: number;
+
   private obstacleSmoothingSteps: number;
 
   constructor(public rows: number, public cols: number) {
@@ -22,11 +25,16 @@ export class Grid {
 
     // this.nextPheromoneGrid = new Uint8Array(rows * cols).fill(0);
     
+    this.pheromoneEvaporation = 0.5;
+    this.pheromoneDeposition = 10;
     this.obstacleSmoothingSteps = 10;
   }
 
+  private clearPheromones(): void {
+    this.pheromoneGrid.fill(0);
+  }
+
   private clearObstacles(): void {
-    // this.obstacleGrid.fill(0);
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.cols; c++) {
         this.cellStates[this.getIndex(c, r)] &= ~OBSTACLE;
@@ -34,15 +42,21 @@ export class Grid {
     }
   }
 
+  public reset(): void {
+    this.clearPheromones();
+    this.clearObstacles();
+  }
+
   // map (x, y) to 1D index 
   public getIndex(x: number, y: number): number {
     return y * this.cols + x;
   }
 
-  public setNest(x: number, y: number) {
-    console.log(`setting nest at (${x}, ${y})`);
-    for (let x_offset = -1; x_offset <= 1; x_offset++) {
-      for (let y_offset = -1; y_offset <= 1; y_offset++) {
+  public setNest(x: number, y: number, nestSize: number) {
+    console.log(`setting nest at (${x}, ${y}) with width ${nestSize}`);
+    let nestRadius = Math.floor(nestSize / 2);
+    for (let x_offset = -nestRadius; x_offset <= nestRadius; x_offset++) {
+      for (let y_offset = -nestRadius; y_offset <= nestRadius; y_offset++) {
         this.cellStates[this.getIndex(x + x_offset, y + y_offset)] |= NEST;
       }
     }
@@ -192,13 +206,13 @@ export class Grid {
       let nextPheromoneGrid = this.pheromoneGrid;
       // decay of pheromones 
       if (this.pheromoneGrid[index] > 0) {
-        nextPheromoneGrid[index] = this.pheromoneGrid[index] - 2;
+        nextPheromoneGrid[index] = this.pheromoneGrid[index] - this.pheromoneEvaporation;
       }
       if (this.cellStates[index] & EXPLORING_ANT) {
         // exploring ant move logic
         nextCellStates[index - 1] |= EXPLORING_ANT;
         nextCellStates[index] &= ~EXPLORING_ANT;
-        nextPheromoneGrid[index] += 100;
+        nextPheromoneGrid[index] += this.pheromoneDeposition;
       }
     }
   }
