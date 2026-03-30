@@ -57,20 +57,18 @@ export class Grid {
     }
 
     // run smoothing steps for obstacle map using Conway's Game of Life rules 
-    let coord = {x: 0, y: 0}
     for (let i = 0; i < this.obstacleSmoothingSteps; i++) {
       let nextCellStates = new Uint8Array(this.rows * this.cols).fill(0);
       for (let r = 0; r < this.rows; r++) {
         for (let c = 0; c < this.cols; c++) {
           let neighboringObstacles = 0;
-          coord = {x: c, y: r};
-          for (const neighborState of this.getAllNeighbors(coord)) {
+          for (const neighborState of this.getAllNeighbors(c, r)) {
             if (neighborState & OBSTACLE) {
               neighboringObstacles++;
             }
           }
 
-          if (neighboringObstacles >= 4 || this.getAllNeighbors(coord).length < 8) {
+          if (neighboringObstacles >= 4 || this.getAllNeighbors(c, r).length < 8) {
             nextCellStates[this.getIndex(c, r)] |= OBSTACLE;
             
           } else {
@@ -138,38 +136,38 @@ export class Grid {
     return this.cellStates[this.getIndex(x - 1, y - 1)];
   }
 
-  private getAllNeighbors(coord: Coord): CellState[] {
+  private getAllNeighbors(x: number, y: number): CellState[] {
     let neighborStates: CellState[] = [];
    
-    let neighborState = this.getNorthNeighbor(coord.x, coord.y);
+    let neighborState = this.getNorthNeighbor(x, y);
     if (neighborState !== null) {
       neighborStates.push(neighborState);
     }
-    neighborState = this.getEastNeighbor(coord.x, coord.y);
+    neighborState = this.getEastNeighbor(x, y);
     if (neighborState !== null) {
       neighborStates.push(neighborState);
     }
-    neighborState = this.getSouthNeighbor(coord.x, coord.y);
+    neighborState = this.getSouthNeighbor(x, y);
     if (neighborState !== null) {
       neighborStates.push(neighborState);
     }
-    neighborState = this.getWestNeighbor(coord.x, coord.y);
+    neighborState = this.getWestNeighbor(x, y);
     if (neighborState !== null) {
       neighborStates.push(neighborState);
     }
-    neighborState = this.getNorthEastNeighbor(coord.x, coord.y);
+    neighborState = this.getNorthEastNeighbor(x, y);
     if (neighborState !== null) {
       neighborStates.push(neighborState);
     }
-    neighborState = this.getSouthEastNeighbor(coord.x, coord.y);
+    neighborState = this.getSouthEastNeighbor(x, y);
     if (neighborState !== null) {
       neighborStates.push(neighborState);
     }
-    neighborState = this.getNorthWestNeighbor(coord.x, coord.y);
+    neighborState = this.getNorthWestNeighbor(x, y);
     if (neighborState !== null) {
       neighborStates.push(neighborState);
     }
-    neighborState = this.getSouthWestNeighbor(coord.x, coord.y);
+    neighborState = this.getSouthWestNeighbor(x, y);
     if (neighborState !== null) {
       neighborStates.push(neighborState);
     }
