@@ -24,7 +24,7 @@ function start() {
   const rows = Math.floor(height / cellSize);
 
   const renderer = new Renderer(ctx, width, height, cellSize);
-  const engine = new Engine(1000);
+  const engine = new Engine(1000, renderer);
   const grid = new Grid(rows, cols, cellSize);
 
 
@@ -44,21 +44,37 @@ function start() {
   })
 
   canvas.addEventListener('mousemove', (e) => {
-    // rrt.handleMouseMove({
-    //   x: e.offsetX, 
-    //   y: e.offsetY
+    const gridX = Math.floor(e.offsetX / cellSize);
+    const gridY = Math.floor(e.offsetY / cellSize);
+    // engine.handleMouseMove({
+    //   x: Math.max(0, Math.min(gridX, cols - 1)),
+    //   y: Math.max(0, Math.min(gridY, rows - 1))
     // });
   })
 
   canvas.addEventListener('mouseleave', (e) => {
+    const gridX = Math.floor(e.offsetX / cellSize);
+    const gridY = Math.floor(e.offsetY / cellSize);
+    // engine.handleMouseLeave({
+    //   x: Math.max(0, Math.min(gridX, cols - 1)),
+    //   y: Math.max(0, Math.min(gridY, rows - 1))
+    // });
   })
 
   canvas.addEventListener('mouseup', (e) => {
+    const gridX = Math.floor(e.offsetX / cellSize);
+    const gridY = Math.floor(e.offsetY / cellSize);
+    // engine.handleMouseUp({
+    //   x: Math.max(0, Math.min(gridX, cols - 1)),
+    //   y: Math.max(0, Math.min(gridY, rows - 1))
+    // });
   })
 
+  grid.initObstacles();
+  engine.setEnvironment(grid);
+
   function update() {
-    renderer.clearWindow();
-    renderer.draw(grid);
+    engine.render();
     setTimeout(() => requestAnimationFrame(update), 10);
   }
 

@@ -1,9 +1,11 @@
 import type { Grid } from "./Grid";
+import { Renderer } from "./Renderer";
 import type { Coord } from "./types";
 
 enum EngineState {
   GENERATING_OBSTACLES,
-  PLACING_NEST
+  PLACING_NEST,
+  PLACING_FOOD
 }
 
 export class Engine {
@@ -12,14 +14,16 @@ export class Engine {
   private nestLocation: Coord;
   private environment: Grid | null;
   private currentState: EngineState;
+  private renderer: Renderer;
   
-  constructor(initPopulation: number) {
+  constructor(initPopulation: number, renderer: Renderer) {
     this.antPopulation = initPopulation;
 
     this.antsInNest = initPopulation;
     this.nestLocation = {x: -100, y: -100};
     this.environment = null;
     this.currentState = EngineState.PLACING_NEST;
+    this.renderer = renderer;
   }
 
   public handleMouseDown(coord: {x: number, y: number}): void {
@@ -29,8 +33,17 @@ export class Engine {
           console.error("attempting to place nest, but environment is not initialized")
           return;
         }
-        if (this.environment.getCell(coord).hasObstacle()) {
+        if (!this.environment.getCell(coord).hasObstacle()) {
+          this.setNestLocation(coord);
+          this.currentState = EngineState.PLACING_FOOD;
         }
+    }
+  }
+
+  public render(): void {
+    this.renderer.clearWindow();
+    if (this.environment !== null) {
+      this.renderer.draw(this.environment);
     }
   }
 
@@ -38,8 +51,7 @@ export class Engine {
     this.environment = environment;
   }
 
-  public setNestLocation(nestLocation: Coord) {
-    
+  private setNestLocation(nestLocation: Coord) {
     this.nestLocation = nestLocation;
   }
 }
