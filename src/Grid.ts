@@ -6,6 +6,8 @@ export const FOOD = 1 << 1;
 export const ANT = 1 << 2;
 export const NEST = 1 << 3;
 
+type CellState = number;
+
 export class Grid {
 
   public cellStates: Uint8Array;
@@ -67,8 +69,8 @@ export class Grid {
         for (let c = 0; c < this.cols; c++) {
           let neighboringObstacles = 0;
           coord = {x: c, y: r};
-          for (const neighbor of this.getAllNeighbors(coord)) {
-            if (neighbor.hasObstacle()) {
+          for (const neighborState of this.getAllNeighbors(coord)) {
+            if (neighborState & OBSTACLE) {
               neighboringObstacles++;
             }
           }
@@ -84,98 +86,98 @@ export class Grid {
     }
   }
 
-  public getNorthNeighbor(coord: Coord): Cell | null {
-    if (coord.y >= this.rows - 1) {
+  public getNorthNeighbor(x: number, y: number): CellState | null {
+    if (y >= this.rows - 1) {
       return null;
     }
-    return this.getCell({x: coord.x, y: coord.y + 1});
+    return this.cellStates[this.getIndex(x, y + 1)];
   }
 
-  public getEastNeighbor(coord: Coord): Cell | null {
-    if (coord.x >= this.cols - 1) {
+  public getEastNeighbor(x: number, y: number): CellState | null {
+    if (x >= this.cols - 1) {
       return null;
     }
-    return this.getCell({x: coord.x + 1, y: coord.y});
+    return this.cellStates[this.getIndex(x + 1, y)];
   }
 
-  public getSouthNeighbor(coord: Coord): Cell | null {
-    if (coord.y <= 0) {
+  public getSouthNeighbor(x: number, y: number): CellState | null {
+    if (y <= 0) {
       return null;
     }
-    return this.getCell({x: coord.x, y: coord.y - 1});
+    return this.cellStates[this.getIndex(x, y - 1)];
   }
 
-  public getWestNeighbor(coord: Coord): Cell | null {
-    if (coord.x <= 0) {
+  public getWestNeighbor(x: number, y: number): CellState | null {
+    if (x <= 0) {
       return null;
     }
-    return this.getCell({x: coord.x - 1, y: coord.y});
+    return this.cellStates[this.getIndex(x - 1, y)];
   }
   
-  public getNorthEastNeighbor(coord: Coord): Cell | null {
-    if (coord.y >= this.rows - 1 || coord.x >= this.cols - 1) {
+  public getNorthEastNeighbor(x: number, y: number): CellState | null {
+    if (y >= this.rows - 1 || x >= this.cols - 1) {
       return null;
     }
-    return this.getCell({x: coord.x + 1, y: coord.y + 1});
+    return this.cellStates[this.getIndex(x + 1, y + 1)];
   }
 
-  public getSouthEastNeighbor(coord: Coord): Cell | null {
-    if (coord.x >= this.cols - 1 || coord.y <= 0) {
+  public getSouthEastNeighbor(x: number, y: number): CellState | null {
+    if (x >= this.cols - 1 || y <= 0) {
       return null;
     }
-    return this.getCell({x: coord.x + 1, y: coord.y - 1});
+    return this.cellStates[this.getIndex(x + 1, y - 1)];
   }
 
-  public getNorthWestNeighbor(coord: Coord): Cell | null {
-    if (coord.x <= 0 || coord.y >= this.rows - 1) {
+  public getNorthWestNeighbor(x: number, y: number): CellState | null {
+    if (x <= 0 || y >= this.rows - 1) {
       return null;
     }
-    return this.getCell({x: coord.x - 1, y: coord.y + 1});
+    return this.cellStates[this.getIndex(x - 1, y + 1)];
   }
 
-  public getSouthWestNeighbor(coord: Coord): Cell | null {
-    if (coord.y <= 0 || coord.x <= 0) {
+  public getSouthWestNeighbor(x: number, y: number): CellState | null {
+    if (y <= 0 || x <= 0) {
       return null;
     }
-    return this.getCell({x: coord.x - 1, y: coord.y - 1});
+    return this.cellStates[this.getIndex(x - 1, y - 1)];
   }
 
-  private getAllNeighbors(coord: Coord): Cell[] {
-    let cells: Cell[] = [];
+  private getAllNeighbors(coord: Coord): CellState[] {
+    let neighborStates: CellState[] = [];
    
-    let neighbor = this.getNorthNeighbor(coord);
-    if (neighbor !== null) {
-      cells.push(neighbor);
+    let neighborState = this.getNorthNeighbor(coord.x, coord.y);
+    if (neighborState !== null) {
+      neighborStates.push(neighborState);
     }
-    neighbor = this.getEastNeighbor(coord);
-    if (neighbor !== null) {
-      cells.push(neighbor);
+    neighborState = this.getEastNeighbor(coord.x, coord.y);
+    if (neighborState !== null) {
+      neighborStates.push(neighborState);
     }
-    neighbor = this.getSouthNeighbor(coord);
-    if (neighbor !== null) {
-      cells.push(neighbor);
+    neighborState = this.getSouthNeighbor(coord.x, coord.y);
+    if (neighborState !== null) {
+      neighborStates.push(neighborState);
     }
-    neighbor = this.getWestNeighbor(coord);
-    if (neighbor !== null) {
-      cells.push(neighbor);
+    neighborState = this.getWestNeighbor(coord.x, coord.y);
+    if (neighborState !== null) {
+      neighborStates.push(neighborState);
     }
-    neighbor = this.getNorthEastNeighbor(coord);
-    if (neighbor !== null) {
-      cells.push(neighbor);
+    neighborState = this.getNorthEastNeighbor(coord.x, coord.y);
+    if (neighborState !== null) {
+      neighborStates.push(neighborState);
     }
-    neighbor = this.getSouthEastNeighbor(coord);
-    if (neighbor !== null) {
-      cells.push(neighbor);
+    neighborState = this.getSouthEastNeighbor(coord.x, coord.y);
+    if (neighborState !== null) {
+      neighborStates.push(neighborState);
     }
-    neighbor = this.getNorthWestNeighbor(coord);
-    if (neighbor !== null) {
-      cells.push(neighbor);
+    neighborState = this.getNorthWestNeighbor(coord.x, coord.y);
+    if (neighborState !== null) {
+      neighborStates.push(neighborState);
     }
-    neighbor = this.getSouthWestNeighbor(coord);
-    if (neighbor !== null) {
-      cells.push(neighbor);
+    neighborState = this.getSouthWestNeighbor(coord.x, coord.y);
+    if (neighborState !== null) {
+      neighborStates.push(neighborState);
     }
-    return cells;
+    return neighborStates;
   }
 
   public step(): void {
