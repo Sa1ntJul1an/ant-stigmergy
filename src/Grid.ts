@@ -1,4 +1,3 @@
-import { Cell } from "./Cell";
 import type { Coord } from "./types";
 
 export const OBSTACLE = 1 << 0;
@@ -45,10 +44,6 @@ export class Grid {
     return this.pheromoneGrid[this.getIndex(coord.x, coord.y)];
   }
 
-  public getCell(coord: Coord): Cell {
-    return new Cell(coord, this.cellStates[this.getIndex(coord.x, coord.y)], this.getPheromoneLevel(coord));
-  }
-
   public initObstacles(): void {
     console.log("initializing obstacles")
     this.clearObstacles();
@@ -74,9 +69,10 @@ export class Grid {
               neighboringObstacles++;
             }
           }
-          
+
           if (neighboringObstacles >= 4 || this.getAllNeighbors(coord).length < 8) {
             nextCellStates[this.getIndex(c, r)] |= OBSTACLE;
+            
           } else {
             nextCellStates[this.getIndex(c, r)] &= ~OBSTACLE;
           }
