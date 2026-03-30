@@ -25,7 +25,7 @@ function start() {
 
   const renderer = new Renderer(ctx, width, height, cellSize);
   const engine = new Engine(1000, renderer);
-  const grid = new Grid(rows, cols, cellSize);
+  const grid = new Grid(rows, cols);
 
 
   genObstaclesBtn.addEventListener('click', () => {

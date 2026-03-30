@@ -1,4 +1,4 @@
-import type { Grid } from "./Grid";
+import { ANT, FOOD, OBSTACLE, type Grid } from "./Grid";
 
 export class Renderer {
   private width: number;
@@ -36,18 +36,19 @@ export class Renderer {
     this.ctx.clearRect(0, 0, this.width, this.height); 
   }
 
-  public draw(grid: Grid): void {
+  public drawGrid(grid: Grid): void {
+    const cellStates = grid.cellStates;
     for (let r = 0; r < grid.rows; r++) {
       for (let c = 0; c < grid.cols; c++) {
-        let cell = grid.getCell({x: c, y: r});
-        if (cell.hasAnt()) {
+        const index = grid.getIndex(c, r);
+        if (cellStates[index] & ANT) {
           this.ctx.fillStyle = this.antColor;
-        } else if (cell.hasFood()) {
+        } else if (cellStates[index] & FOOD) {
           this.ctx.fillStyle = this.foodColor;
-        } else if (cell.hasObstacle()) {
+        } else if (cellStates[index] & OBSTACLE) {
           this.ctx.fillStyle = this.obstacleColor;
-        } else if (cell.getPheromoneLevel() > 0) {
-          this.ctx.fillStyle = this.pheromoneColor;
+        // } else if (cell.getPheromoneLevel() > 0) {
+        //   this.ctx.fillStyle = this.pheromoneColor;
         } else {
           this.ctx.fillStyle = this.emptyGridColor;
         }

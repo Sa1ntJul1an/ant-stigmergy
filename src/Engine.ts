@@ -43,7 +43,7 @@ export class Engine {
   public render(): void {
     this.renderer.clearWindow();
     if (this.environment !== null) {
-      this.renderer.draw(this.environment);
+      this.renderer.drawGrid(this.environment);
     }
   }
 
