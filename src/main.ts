@@ -74,7 +74,8 @@ function start() {
 
   function update() {
     engine.render();
-    setTimeout(() => requestAnimationFrame(update), 10);
+    engine.step();
+    setTimeout(() => requestAnimationFrame(update), 30);
   }
 
   update();

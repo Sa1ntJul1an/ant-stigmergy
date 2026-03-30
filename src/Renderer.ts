@@ -1,4 +1,4 @@
-import { ANT, FOOD, NEST, OBSTACLE, type Grid } from "./Grid";
+import { EXPLORING_ANT, FOOD, NEST, OBSTACLE, RETURNING_ANT, type Grid } from "./Grid";
 
 export class Renderer {
   private width: number;
@@ -10,8 +10,9 @@ export class Renderer {
   private antColor: string;
   private foodColor: string;
   private nestColor: string;
-  private pheromoneColor: string;
-  
+  private explorePheromoneColor: string;
+  private returnPheromoneColor: string;
+
   constructor(private ctx: CanvasRenderingContext2D, width: number, height: number, cellSize: number) {
     this.height = height; 
     this.width = width;
@@ -22,7 +23,8 @@ export class Renderer {
     this.antColor = 'white';
     this.foodColor = 'green';
     this.nestColor = 'yellow'
-    this.pheromoneColor = 'magenta';
+    this.explorePheromoneColor = 'magenta';
+    this.returnPheromoneColor = 'cyan';
   }
 
   public getHeight(): number {
@@ -40,10 +42,12 @@ export class Renderer {
 
   public drawGrid(grid: Grid): void {
     const cellStates = grid.cellStates;
+    const explorePheromoneLevels = grid.pheromoneGrid;
+    let index = grid.getIndex(0, 0);
     for (let r = 0; r < grid.rows; r++) {
       for (let c = 0; c < grid.cols; c++) {
-        const index = grid.getIndex(c, r);
-        if (cellStates[index] & ANT) {
+        index = grid.getIndex(c, r);
+        if (cellStates[index] & EXPLORING_ANT || cellStates[index] & RETURNING_ANT) {
           this.ctx.fillStyle = this.antColor;
         } else if (cellStates[index] & NEST) {
           this.ctx.fillStyle = this.nestColor;
@@ -51,8 +55,9 @@ export class Renderer {
           this.ctx.fillStyle = this.foodColor;
         } else if (cellStates[index] & OBSTACLE) {
           this.ctx.fillStyle = this.obstacleColor;
-        // } else if (cell.getPheromoneLevel() > 0) {
-        //   this.ctx.fillStyle = this.pheromoneColor;
+        } else if (explorePheromoneLevels[index] > 0) {
+          // this.ctx.fillStyle = this.explorePheromoneColor;
+          this.ctx.fillStyle = `rgba(255, 0, 255, ${explorePheromoneLevels[index] / 100})`
         } else {
           this.ctx.fillStyle = this.emptyGridColor;
         }
@@ -64,6 +69,5 @@ export class Renderer {
         )
       }
     }
-    
   }
 }

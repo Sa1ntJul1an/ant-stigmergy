@@ -1,16 +1,15 @@
-import type { Coord } from "./types";
-
 export const OBSTACLE = 1 << 0;
 export const FOOD = 1 << 1;
-export const ANT = 1 << 2;
-export const NEST = 1 << 3;
+export const NEST = 1 << 2;
+export const EXPLORING_ANT = 1 << 3;
+export const RETURNING_ANT = 1 << 4;
 
 type CellState = number;
 
 export class Grid {
 
   public cellStates: Uint8Array;
-  private pheromoneGrid: Uint8Array;
+  public pheromoneGrid: Uint32Array;
 
   // private nextPheromoneGrid: Uint8Array;
 
@@ -19,7 +18,7 @@ export class Grid {
   constructor(public rows: number, public cols: number) {
     this.cellStates = new Uint8Array(rows * cols).fill(0);
 
-    this.pheromoneGrid = new Uint8Array(rows * cols).fill(0);
+    this.pheromoneGrid = new Uint32Array(rows * cols).fill(0);
 
     // this.nextPheromoneGrid = new Uint8Array(rows * cols).fill(0);
     
@@ -49,8 +48,12 @@ export class Grid {
     }
   }
 
-  private getPheromoneLevel(coord: Coord): number {
-    return this.pheromoneGrid[this.getIndex(coord.x, coord.y)];
+  public spawnAnt(x: number, y: number) {
+    console.log(`spawning ant at (${x}, ${y})`);
+    if (this.cellStates[this.getIndex(x, y)] & OBSTACLE) {
+      return;
+    }
+    this.cellStates[this.getIndex(x, y)] |= EXPLORING_ANT;
   }
 
   public initObstacles(): void {
@@ -184,6 +187,19 @@ export class Grid {
   }
 
   public step(): void {
-    
+    for (let index = 0; index < this.cellStates.length; index++) {
+      let nextCellStates = this.cellStates;
+      let nextPheromoneGrid = this.pheromoneGrid;
+      // decay of pheromones 
+      if (this.pheromoneGrid[index] > 0) {
+        nextPheromoneGrid[index] = this.pheromoneGrid[index] - 2;
+      }
+      if (this.cellStates[index] & EXPLORING_ANT) {
+        // exploring ant move logic
+        nextCellStates[index - 1] |= EXPLORING_ANT;
+        nextCellStates[index] &= ~EXPLORING_ANT;
+        nextPheromoneGrid[index] += 100;
+      }
+    }
   }
 }

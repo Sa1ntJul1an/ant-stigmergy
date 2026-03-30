@@ -33,6 +33,14 @@ export class Engine {
         }
         this.environment.setNest(coord.x, coord.y);
         this.currentState = EngineState.PLACING_FOOD;
+        break;
+      case EngineState.PLACING_FOOD:
+        if (this.environment === null) {
+          console.error("attempting to place food, but environment is not initialized")
+          return;
+        }
+        this.environment.spawnAnt(coord.x, coord.y);
+        break;
     }
   }
 
@@ -51,6 +59,14 @@ export class Engine {
     if (this.environment !== null) {
       this.environment.initObstacles();
       this.currentState = EngineState.PLACING_NEST;
+    }
+  }
+
+  public step(): void {
+    switch (this.currentState) {
+      case EngineState.PLACING_FOOD:
+        this.environment?.step();
+        break;
     }
   }
 }
