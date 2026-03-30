@@ -11,7 +11,6 @@ enum EngineState {
 export class Engine {
   private antPopulation: number;
   private antsInNest: number;
-  private nestLocation: Coord;
   private environment: Grid | null;
   private currentState: EngineState;
   private renderer: Renderer;
@@ -20,7 +19,6 @@ export class Engine {
     this.antPopulation = initPopulation;
 
     this.antsInNest = initPopulation;
-    this.nestLocation = {x: -100, y: -100};
     this.environment = null;
     this.currentState = EngineState.PLACING_NEST;
     this.renderer = renderer;
@@ -33,10 +31,8 @@ export class Engine {
           console.error("attempting to place nest, but environment is not initialized")
           return;
         }
-        if (!this.environment.getCell(coord).hasObstacle()) {
-          this.setNestLocation(coord);
-          this.currentState = EngineState.PLACING_FOOD;
-        }
+        this.environment.setNest(coord.x, coord.y);
+        this.currentState = EngineState.PLACING_FOOD;
     }
   }
 
@@ -51,7 +47,10 @@ export class Engine {
     this.environment = environment;
   }
 
-  private setNestLocation(nestLocation: Coord) {
-    this.nestLocation = nestLocation;
+  public initObstacles(): void {
+    if (this.environment !== null) {
+      this.environment.initObstacles();
+      this.currentState = EngineState.PLACING_NEST;
+    }
   }
 }

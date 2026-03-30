@@ -1,4 +1,4 @@
-import { ANT, FOOD, OBSTACLE, type Grid } from "./Grid";
+import { ANT, FOOD, NEST, OBSTACLE, type Grid } from "./Grid";
 
 export class Renderer {
   private width: number;
@@ -9,6 +9,7 @@ export class Renderer {
   private obstacleColor: string;
   private antColor: string;
   private foodColor: string;
+  private nestColor: string;
   private pheromoneColor: string;
   
   constructor(private ctx: CanvasRenderingContext2D, width: number, height: number, cellSize: number) {
@@ -20,6 +21,7 @@ export class Renderer {
     this.obstacleColor = '#ff3a09';
     this.antColor = 'white';
     this.foodColor = 'green';
+    this.nestColor = 'yellow'
     this.pheromoneColor = 'magenta';
   }
 
@@ -43,6 +45,8 @@ export class Renderer {
         const index = grid.getIndex(c, r);
         if (cellStates[index] & ANT) {
           this.ctx.fillStyle = this.antColor;
+        } else if (cellStates[index] & NEST) {
+          this.ctx.fillStyle = this.nestColor;
         } else if (cellStates[index] & FOOD) {
           this.ctx.fillStyle = this.foodColor;
         } else if (cellStates[index] & OBSTACLE) {

@@ -29,8 +29,7 @@ function start() {
 
 
   genObstaclesBtn.addEventListener('click', () => {
-    grid.initObstacles();
-    engine.setEnvironment(grid);
+    engine.initObstacles();
   })
 
   // Event listeners 
@@ -70,8 +69,8 @@ function start() {
     // });
   })
 
-  grid.initObstacles();
   engine.setEnvironment(grid);
+  engine.initObstacles();
 
   function update() {
     engine.render();

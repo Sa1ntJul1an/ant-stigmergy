@@ -40,6 +40,15 @@ export class Grid {
     return y * this.cols + x;
   }
 
+  public setNest(x: number, y: number) {
+    console.log(`setting nest at (${x}, ${y})`);
+    for (let x_offset = -1; x_offset <= 1; x_offset++) {
+      for (let y_offset = -1; y_offset <= 1; y_offset++) {
+        this.cellStates[this.getIndex(x + x_offset, y + y_offset)] |= NEST;
+      }
+    }
+  }
+
   private getPheromoneLevel(coord: Coord): number {
     return this.pheromoneGrid[this.getIndex(coord.x, coord.y)];
   }
