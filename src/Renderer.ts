@@ -13,12 +13,14 @@ export class Renderer {
   private explorePheromoneColor: string;
   private returnPheromoneColor: string;
 
+  private pheromoneColors = Array.from({length: 101}, (_, i) => `rgba(255, 0, 255, ${i / 100})`);
+
   constructor(private ctx: CanvasRenderingContext2D, width: number, height: number, cellSize: number) {
     this.height = height; 
     this.width = width;
     this.cellSize = cellSize;
    
-    this.emptyGridColor = '#2f2f2f'
+    this.emptyGridColor = '#1f1f1f'
     this.obstacleColor = '#ff3a09';
     this.antColor = 'white';
     this.foodColor = 'green';
@@ -70,8 +72,7 @@ export class Renderer {
         // draw pheromone levels if they exist
         const pheromoneLevel = explorePheromoneLevels[index];
         if (pheromoneLevel > 0 && !(cellStates[index] & (OBSTACLE | FOOD | NEST))) {
-          let alpha = (0.4 * (1 + (pheromoneLevel / 100)));
-          this.ctx.fillStyle = `rgba(255, 0, 255, ${alpha})`;
+          this.ctx.fillStyle = this.pheromoneColors[Math.min(Math.round(pheromoneLevel), 100)];
           this.drawCell(c, r);
         }
 
