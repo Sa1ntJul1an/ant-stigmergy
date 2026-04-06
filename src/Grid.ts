@@ -35,8 +35,8 @@ export class Grid {
     this.diffusionKernel = new Float32Array(3 * 3).fill(0);
 
     this.pheromoneEvaporation = 0.5;
-    this.pheromoneDeposition = 40.0;
-    this.pheromoneDiffusionRate = 0.7;
+    this.pheromoneDeposition = 20.0;
+    this.pheromoneDiffusionRate = 0.08;
     this.windDirectionDeg = 70.0;
     this.windDirectionRad = (this.windDirectionDeg * Math.PI) / 180;
     
