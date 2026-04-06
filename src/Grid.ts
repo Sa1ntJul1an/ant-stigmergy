@@ -38,11 +38,23 @@ export class Grid {
     this.pheromoneDeposition = 40.0;
     this.pheromoneDiffusionRate = 0.7;
     this.windDirectionDeg = 70.0;
-    this.windDirectionRad = (this.windDirectionDeg * Math.PI) / 180.0;
+    this.windDirectionRad = (this.windDirectionDeg * Math.PI) / 180;
     
     this.obstacleSmoothingSteps = 10;
 
     // generate diffusion kernel weighted in direction of wind
+    this.generateDiffusionKernel();
+  }
+
+  public setWindDirection(directionDeg: number): void {
+    this.windDirectionDeg = directionDeg;
+    this.windDirectionRad = (this.windDirectionDeg * Math.PI) / 180;
+    this.generateDiffusionKernel();
+  }
+
+  public setWindStrength(strength: number) : void {
+    strength = Math.min(Math.max(strength, 0), 1);
+    this.pheromoneDiffusionRate = strength;
     this.generateDiffusionKernel();
   }
 
@@ -55,11 +67,13 @@ export class Grid {
     let kernelSum = 0;
     for (let x = -1; x <= 1; x++) {
       for (let y = -1; y <= 1; y++) {
+        // this logic calculates a steerable kernel that is similar to a box blur, but biased by an angle and strength to simulate wind
         let kernelValue = 1 + this.pheromoneDiffusionRate * (x * Math.cos(this.windDirectionRad) + y * Math.sin(this.windDirectionRad));
         this.diffusionKernel[(y + 1) * 3 + (x + 1)] = kernelValue;
         kernelSum += kernelValue;
       }
     }
+    // normalize kernel
     this.diffusionKernel = this.diffusionKernel.map(w => w / kernelSum);
   }
 
